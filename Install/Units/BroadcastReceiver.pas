@@ -93,7 +93,7 @@ begin
     {$IFDEF ANDROID}
       filter := TJIntentFilter.Create;
       filter.addAction(StringToJString(Value));
-      SharedActivityContext.registerReceiver(FReceiver,filter);
+      TAndroidHelper.Context.registerReceiver(FReceiver,filter);
     {$ENDIF}
       FItems.Add(Value);
     end;
@@ -116,7 +116,7 @@ begin
   begin
     FItems.Delete(Index);
     {$IFDEF ANDROID}
-      SharedActivity.UnregisterReceiver(FReceiver);
+      TAndroidHelper.Context.unregisterReceiver(FReceiver);
       RegisterReceive;
     {$ENDIF}
   end;
@@ -127,7 +127,7 @@ begin
   FItems.Free;
 {$IFDEF ANDROID}
   if FReceiver <> nil  then
-    SharedActivity.UnregisterReceiver(FReceiver);
+    TAndroidHelper.Context.UnregisterReceiver(FReceiver);
 {$ENDIF}
   inherited;
 end;
@@ -146,7 +146,7 @@ function TBroadcastReceiver.HasPermission(const Permission: string): Boolean;
 {$IFDEF ANDROID}
 begin
   //Permissions listed at http://d.android.com/reference/android/Manifest.permission.html
-  Result := SharedActivity.checkCallingOrSelfPermission(
+  Result := TAndroidHelper.Context.checkCallingOrSelfPermission(
     StringToJString(Permission)) =
     TJPackageManager.JavaClass.PERMISSION_GRANTED
 {$ELSE}
@@ -192,7 +192,7 @@ var
 begin
   Inx := TJIntent.Create;
   Inx.setAction(StringToJString(Value));
-  SharedActivityContext.sendBroadcast(Inx);
+  TAndroidHelper.Context.sendBroadcast(Inx);
 {$ELSE}
 begin
 {$ENDIF}
